@@ -5,6 +5,7 @@ var index = require("./routes");
 var assignments = require("./routes/assignments");
 var dotenv = require("dotenv");
 var path = require("path");
+var cors = require("cors");
 var app = express();
 
 var MongoClient = require("mongodb").MongoClient;
@@ -25,6 +26,7 @@ app.set("view engine", "ejs"); // ejs view engine
 app.use(express.static(path.join(__dirname, "client")));
 
 // Body parser middleware
+app.use(cors()); // Enable CORS
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/", index);
