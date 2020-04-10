@@ -27,3 +27,23 @@ router.get("/assignments", function(req, res, next) {
       });
   });
 });
+
+// Get ONE assignment by Id
+router.get("/assignments/:id", function(req, res, next) {
+  MongoClient.connect(url, function(connecterr, db) {
+    if (connecterr) throw connecterr;
+    var dbo = db.db("assignments");
+    const id = new ObjectId(req.params.id);
+    var query = { _id: id };
+    dbo
+      .collection("assignments")
+      .find(query)
+      .toArray(function(err, data) {
+        if (err) res.send(err);
+        res.json(data);
+        db.close();
+      });
+  });
+});
+
+module.exports = router;
