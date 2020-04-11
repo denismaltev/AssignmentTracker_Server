@@ -29,8 +29,22 @@ router.post("/assignments", (req, res) => {
 router.delete("/assignments/:id", (req, res) => {
   MongooseAssignmentModel.findByIdAndDelete(req.params.id, (err, data) => {
     if (err) res.send(err);
-    res.json(204);
+    res.json(204, data);
   });
+});
+
+// Put an assignment
+router.put("/assignments/:id", (req, res) => {
+  var assignment = req.body;
+  MongooseAssignmentModel.findOneAndUpdate(
+    { _id: req.params.id },
+    assignment,
+    { new: true },
+    (err, data) => {
+      if (err) res.send(err);
+      res.json(data);
+    }
+  );
 });
 
 module.exports = router;
