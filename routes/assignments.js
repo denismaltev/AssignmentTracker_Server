@@ -25,4 +25,12 @@ router.post("/assignments", (req, res) => {
   });
 });
 
+// Delete an assignment
+router.delete("/assignments/:id", (req, res) => {
+  MongooseAssignmentModel.findByIdAndDelete(req.params.id, (err, data) => {
+    if (err) res.send(err);
+    res.json(204);
+  });
+});
+
 module.exports = router;
