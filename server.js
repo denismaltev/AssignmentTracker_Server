@@ -7,20 +7,19 @@ var dotenv = require("dotenv");
 var path = require("path");
 var cors = require("cors");
 var app = express();
-
-var MongoClient = require("mongodb").MongoClient;
-var url = "mongodb://localhost:27017/assignments";
+var mongoose = require("mongoose");
 
 // Environment variables
 let confPath = path.join(__dirname, ".env");
 dotenv.config({ path: confPath });
 var port = process.env.PORT || 3000;
-var db_server = process.env.DB_SERVER || "localhost";
+//var db_server = process.env.DB_SERVER || "localhost";
 
-// View engine
-var ejsEngine = require("ejs-locals");
-app.engine("ejs", ejsEngine); // support master pages
-app.set("view engine", "ejs"); // ejs view engine
+// Mongoose
+mongoose.connect(process.env.DATABASE_LOCAL, function(err) {
+  if (err) throw err;
+  console.log("Successfully connected to DB");
+});
 
 // Set static folder
 app.use(express.static(path.join(__dirname, "client")));
@@ -33,5 +32,5 @@ app.use("/", index);
 app.use("/api", assignments);
 app.listen(port, function() {
   console.log("Server started on port: " + port);
-  console.log("Using mongo database on server: " + db_server);
+  //console.log("Using mongo database on server: " + db_server );
 });
