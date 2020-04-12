@@ -60,10 +60,14 @@ router.get("/assignments", async (req, res) => {
   console.log(req.headers.authorization); // !!!!!!!!!!!!!!!!!! DELETE
   let userId = await getUserID(req.headers.authorization);
   if (isUserIdExist(userId)) {
-    MongooseAssignmentModel.find({}, (err, data) => {
-      if (err) res.send(err);
-      res.json(data);
-    });
+    MongooseAssignmentModel.find(
+      { userId: userId },
+      //{ userID: 0 },
+      (err, data) => {
+        if (err) res.send(err);
+        res.json(data);
+      }
+    );
   } else {
     res.json(401, { errorMessage: "You are not authorized" });
   }
@@ -73,7 +77,7 @@ router.get("/assignments", async (req, res) => {
 router.post("/assignments", async (req, res) => {
   let assignment = req.body;
   if (!isValid(assignment)) {
-    res.json(400, {});
+    res.json(400, { errorMessage: "Wrong data" });
   } else {
     let userId = await getUserID(req.headers.authorization);
     if (isUserIdExist(userId)) {
@@ -84,7 +88,7 @@ router.post("/assignments", async (req, res) => {
         res.json(201, { message: "Assignment was successfully created" });
       });
     } else {
-      res.json(401, { errorMassage: "You are not authorized" });
+      res.json(401, { errorMessage: "You are not authorized" });
     }
   }
 });
