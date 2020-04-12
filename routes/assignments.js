@@ -7,7 +7,7 @@ var path = require("path");
 let configPath = path.join(__dirname, "../", ".env");
 dotenv.config({ path: configPath });
 
-// Firebase Auth.
+// Firebase Auth. Initialization
 var admin = require("firebase-admin");
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -20,6 +20,8 @@ admin.initializeApp({
 
 // Get UserID from Firebase
 function getUserID(tokenFromClient) {
+  if (tokenFromClient === null || typeof tokenFromClient === "undefined")
+    return null;
   let token = tokenFromClient.replace("Bearer ", "");
   var userID = admin
     .auth()
@@ -45,27 +47,45 @@ function isValid(assignment) {
   } else return false;
 }
 
+function isUserIdExist(userId) {
+  if (userId === null || typeof userId === "undefined") {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 // Get all assignments
-router.get("/assignments", (req, res) => {
-  MongooseAssignmentModel.find({}, async (err, data) => {
-    if (err) res.send(err);
-    res.json(data);
-    var a = await getUserID(req.headers.authorization);
-    console.log("RESULT: " + a);
-  });
+router.get("/assignments", async (req, res) => {
+  console.log(req.headers.authorization); // !!!!!!!!!!!!!!!!!! DELETE
+  let userId = await getUserID(req.headers.authorization);
+  if (isUserIdExist(userId)) {
+    MongooseAssignmentModel.find({}, (err, data) => {
+      if (err) res.send(err);
+      res.json(data);
+    });
+  } else {
+    res.json(401, { errorMessage: "You are not authorized" });
+  }
 });
 
 // Create an assignment
-router.post("/assignments", (req, res) => {
-  var assignment = req.body;
+router.post("/assignments", async (req, res) => {
+  let assignment = req.body;
   if (!isValid(assignment)) {
     res.json(400, {});
   } else {
-    let newAssignment = new MongooseAssignmentModel(assignment);
-    newAssignment.save((err, data) => {
-      if (err) res.send(err);
-      res.json(201, data);
-    });
+    let userId = await getUserID(req.headers.authorization);
+    if (isUserIdExist(userId)) {
+      assignment.userId = userId;
+      let newAssignment = new MongooseAssignmentModel(assignment);
+      newAssignment.save((err, data) => {
+        if (err) res.send(err);
+        res.json(201, { message: "Assignment was successfully created" });
+      });
+    } else {
+      res.json(401, { errorMassage: "You are not authorized" });
+    }
   }
 });
 

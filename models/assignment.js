@@ -2,27 +2,27 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const assignmentSchema = new Schema({
-  // userId: {
-  //   type: String,
-  //   required: true
-  // },
+  userId: {
+    type: String,
+    required: true,
+  },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   description: {
     type: String,
-    required: false
+    required: false,
   },
   date: {
     type: Date,
-    required: true
+    required: true,
   },
   isDone: {
     type: Boolean,
     required: true,
-    default: false
-  }
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("Assignment", assignmentSchema);
