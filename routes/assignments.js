@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const MongooseAssignmentModel = require("../models/assignment");
 
+var admin = require("firebase-admin");
 var dotenv = require("dotenv");
 var path = require("path");
 let configPath = path.join(__dirname, "../", ".env");
