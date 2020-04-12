@@ -18,6 +18,21 @@ admin.initializeApp({
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
+// Get UserID from Firebase
+function getUserID(tokenFromClient) {
+  let token = tokenFromClient.replace("Bearer ", "");
+  var userID = admin
+    .auth()
+    .verifyIdToken(token)
+    .then(function (decodedToken) {
+      return decodedToken.uid;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return userID;
+}
+
 // Validation
 function isValid(assignment) {
   if (
@@ -32,9 +47,11 @@ function isValid(assignment) {
 
 // Get all assignments
 router.get("/assignments", (req, res) => {
-  MongooseAssignmentModel.find({}, (err, data) => {
+  MongooseAssignmentModel.find({}, async (err, data) => {
     if (err) res.send(err);
     res.json(data);
+    var a = await getUserID(req.headers.authorization);
+    console.log("RESULT: " + a);
   });
 });
 
