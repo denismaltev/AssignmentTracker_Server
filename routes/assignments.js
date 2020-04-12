@@ -2,11 +2,21 @@ var express = require("express");
 var router = express.Router();
 const MongooseAssignmentModel = require("../models/assignment");
 
-var admin = require("firebase-admin");
 var dotenv = require("dotenv");
 var path = require("path");
 let configPath = path.join(__dirname, "../", ".env");
 dotenv.config({ path: configPath });
+
+// Firebase Auth.
+var admin = require("firebase-admin");
+admin.initializeApp({
+  credential: admin.credential.cert({
+    private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    client_email: process.env.FIREBASE_CLIENT_EMAIL,
+    project_id: process.env.FIREBASE_PROJECT_ID,
+  }),
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+});
 
 // Validation
 function isValid(assignment) {
