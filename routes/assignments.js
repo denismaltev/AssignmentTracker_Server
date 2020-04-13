@@ -107,20 +107,25 @@ router.delete("/assignments/:id", async (req, res) => {
 });
 
 // Put an assignment
-router.put("/assignments/:id", (req, res) => {
-  var assignment = req.body;
+router.put("/assignments/:id", async (req, res) => {
+  let assignment = req.body;
   if (!isValid(assignment)) {
-    res.json(400, {});
+    res.json(400, { errorMessage: "Wrong data" });
   } else {
-    MongooseAssignmentModel.findOneAndUpdate(
-      { _id: req.params.id },
-      assignment,
-      { new: true },
-      (err, data) => {
-        if (err) res.send(err);
-        res.json(200, data);
-      }
-    );
+    let userId = await getUserID(req.headers.authorization);
+    if (isUserIdExist(userId)) {
+      MongooseAssignmentModel.findOneAndUpdate(
+        { _id: req.params.id },
+        assignment,
+        { new: true },
+        (err, data) => {
+          if (err) res.send(err);
+          res.json(200, { message: "Assignment was successfully updated" });
+        }
+      );
+    } else {
+      res.json(401, { errorMessage: "You are not authorized" });
+    }
   }
 });
 
