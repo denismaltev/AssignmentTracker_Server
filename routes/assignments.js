@@ -94,11 +94,16 @@ router.post("/assignments", async (req, res) => {
 });
 
 // Delete an assignment
-router.delete("/assignments/:id", (req, res) => {
-  MongooseAssignmentModel.findByIdAndDelete(req.params.id, (err, data) => {
-    if (err) res.send(err);
-    res.json(204, data);
-  });
+router.delete("/assignments/:id", async (req, res) => {
+  let userId = await getUserID(req.headers.authorization);
+  if (isUserIdExist(userId)) {
+    MongooseAssignmentModel.findByIdAndDelete(req.params.id, (err, data) => {
+      if (err) res.send(err);
+      res.json(200, { message: "Assignment was successfully deleted" });
+    });
+  } else {
+    res.json(401, { errorMessage: "You are not authorized" });
+  }
 });
 
 // Put an assignment
