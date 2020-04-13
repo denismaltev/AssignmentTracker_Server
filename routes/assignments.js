@@ -57,7 +57,6 @@ function isUserIdExist(userId) {
 
 // Get all assignments
 router.get("/assignments", async (req, res) => {
-  console.log(req.headers.authorization); // !!!!!!!!!!!!!!!!!! DELETE
   let userId = await getUserID(req.headers.authorization);
   if (isUserIdExist(userId)) {
     MongooseAssignmentModel.find(
