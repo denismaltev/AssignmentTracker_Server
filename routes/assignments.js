@@ -64,7 +64,7 @@ router.get("/assignments", async (req, res) => {
       { userId: userId },
       { userId: 0 },
       (err, data) => {
-        if (err) res.send(err);
+        if (err) res.send(500, err);
         res.json(data);
       }
     );
@@ -84,7 +84,7 @@ router.post("/assignments", async (req, res) => {
       assignment.userId = userId;
       let newAssignment = new MongooseAssignmentModel(assignment);
       newAssignment.save((err, data) => {
-        if (err) res.send(err);
+        if (err) res.send(500, err);
         res.json(201, { message: "Assignment was successfully created" });
       });
     } else {
@@ -98,7 +98,7 @@ router.delete("/assignments/:id", async (req, res) => {
   let userId = await getUserID(req.headers.authorization);
   if (isUserIdExist(userId)) {
     MongooseAssignmentModel.findByIdAndDelete(req.params.id, (err, data) => {
-      if (err) res.send(err);
+      if (err) res.send(500, err);
       res.json(200, { message: "Assignment was successfully deleted" });
     });
   } else {
@@ -119,7 +119,7 @@ router.put("/assignments/:id", async (req, res) => {
         assignment,
         { new: true },
         (err, data) => {
-          if (err) res.send(err);
+          if (err) res.send(500, err);
           res.json(200, { message: "Assignment was successfully updated" });
         }
       );
