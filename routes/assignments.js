@@ -62,7 +62,7 @@ router.get("/assignments", async (req, res) => {
   if (isUserIdExist(userId)) {
     MongooseAssignmentModel.find(
       { userId: userId },
-      //{ userID: 0 },
+      { userId: 0 },
       (err, data) => {
         if (err) res.send(err);
         res.json(data);
